@@ -267,12 +267,12 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
     <div class="kpi-card stagger stagger-delay-2">
       <div class="label">Messaggi Lingua Straniera</div>
       <div class="value" id="cv-straniera">390</div>
-      <div class="sub">21.2% del totale</div>
+      <div class="sub">60.0% delle conversazioni</div>
     </div>
     <div class="kpi-card stagger stagger-delay-3">
       <div class="label">Messaggi Fuori Orario</div>
       <div class="value" id="cv-fuoriorario">353</div>
-      <div class="sub">19.2% del totale</div>
+      <div class="sub">54.3% delle conversazioni</div>
     </div>
   </div>
 
@@ -670,8 +670,8 @@ function updateKPIs(section) {
       animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
       animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
       animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
-      const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
-      const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
+      const pctStraniera = (d.straniera / d.conversazioni * 100).toFixed(1);
+      const pctFuori = (d.fuoriorario / d.conversazioni * 100).toFixed(1);
       const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
       const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
       if (subS) subS.textContent = pctStraniera + '% del totale';
