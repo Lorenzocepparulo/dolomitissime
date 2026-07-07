@@ -17,10 +17,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 🚨 GARANZIA: se una sottopagina esistente non è nel repo, blocca il deploy
+      - name: Verifica sottopagine presenti
+        run: |
+          MISSING=0
+          # Lista pagine obbligatorie (aggiungere qui ogni nuova sottopagina)
+          for page in index.html; do
+            if [ ! -f "$page" ]; then
+              echo "❌ PAGINA MANCANTE: $page — non nel repo!"
+              MISSING=1
+            fi
+          done
+          echo "---"
+          echo "📋 Sottopagine trovate:"
+          find . -name "index.html" -not -path "./.git/*" | sort
+          if [ "$MISSING" = "1" ]; then
+            echo "❌ Blocco deploy: pagine essenziali mancanti nel repo."
+            exit 1
+          fi
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages deploy . --project-name dolomitissime --branch main
-
