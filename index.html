@@ -116,7 +116,7 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:.5rem">
-    <div class="live-badge"><span class="dot"></span> Dati · 13/06/25 → 06/07/26</div>
+    <div class="live-badge"><span class="dot"></span> Dati · 06/07/2026</div>
     <button class="dark-toggle" id="darkToggle" title="Modalità scura">🌙</button>
   </div>
 </header>
@@ -501,36 +501,36 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
 const data = {
   supergiulia: {
     '2mesi': {
-      conversazioni: 650, prenotazioni: 0, tassoConversione: 0,
-      risposta: 0, completate: 0, msgmedi: 0,
-      localita: [36, 22, 20, 20, 18, 14, 13, 12, 10, 10],
-      stagionalita: [45, 62, 85, 120, 98, 73, 55, 42, 30, 20, 12, 8],
+      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 73, msgmedi: 7.6,
+      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
+      stagionalita: [12, 19, 30, 1, 2, 2],
       composizione: [35, 15, 10, 6, 2, 7],
       preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
     },
     cumulato: {
-      conversazioni: 650, prenotazioni: 0, tassoConversione: 0,
-      risposta: 0, completate: 0, msgmedi: 0,
-      localita: [36, 22, 20, 20, 18, 14, 13, 12, 10, 10],
-      stagionalita: [45, 62, 85, 120, 98, 73, 55, 42, 30, 20, 12, 8],
+      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 73, msgmedi: 7.6,
+      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
+      stagionalita: [12, 19, 30, 1, 2, 2],
       composizione: [35, 15, 10, 6, 2, 7],
       preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
     }
   },
   casevacanze: {
     '2mesi': {
-      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 297,
-      domande: { wifi:186, attivita:103, spazzatura:101, luce:87, elettrodomestici:0, parcheggio:104, pulizie:0, animali:12, riscaldamento:70 }
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     },
     cumulato: {
-      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 297,
-      domande: { wifi:186, attivita:103, spazzatura:101, luce:87, elettrodomestici:0, parcheggio:104, pulizie:0, animali:12, riscaldamento:70 }
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     }
   }
 };
 
-const localitaLabels = ['Casa Al Moro','Chalet Laura','Regina *','Casa Narciso','B&B El Lares','Casa Stella','Cond. Ginestre','Casa Nevexe','Villa Licia','Casa Molino'];
-const mesiLabels = ['Giu 25','Lug 25','Ago 25','Set 25','Ott 25','Nov 25','Dic 25','Gen 26','Feb 26','Mar 26','Apr 26','Mag 26','Giu 26'];
+const localitaLabels = ['Alleghe','Falcade','Rocca P.','Agordo','Pozza Fassa','Val di Fassa','Moena','Vigo Fassa','Selva Cadore','Cadore'];
+const mesiLabels = ['Giu 26','Lug 26','Ago 26','Set 26','Dic 26','Giu 27'];
 const composizioneLabels = ['2 persone','4 persone','6-7 persone','3 persone','5 persone','Altro'];
 const preferenzeLabels = ['Bambini','Animali','Lavatrice','Balcone','Giardino','Lavastoviglie','Parcheggio','Terrazza'];
 const domandeKeys = ['wifi','attivita','spazzatura','luce','elettrodomestici','parcheggio','pulizie','animali','riscaldamento'];
@@ -597,28 +597,40 @@ function updateKPIs(section) {
       banner.style.fontWeight = '400';
       banner.previousElementSibling.textContent = 'IN ATTESA';
     }
-    document.getElementById('sg-risposta').textContent = d.risposta > 0 ? d.risposta + '%' : '—';
-    document.getElementById('sg-completate').textContent = d.completate > 0 ? d.completate + '%' : '—';
-    document.getElementById('sg-msgmedi').textContent = d.msgmedi > 0 ? d.msgmedi.toFixed(1) : '—';
+    document.getElementById('sg-risposta').textContent = d.risposta + '%';
+    document.getElementById('sg-completate').textContent = d.completate + '%';
+    document.getElementById('sg-msgmedi').textContent = d.msgmedi.toFixed(1);
     // Ring progress
-    updateRing('ring-risposta', d.risposta || 70);
-    updateRing('ring-completate', d.completate || 70);
+    updateRing('ring-risposta', d.risposta);
+    updateRing('ring-completate', d.completate);
     const subPren = document.querySelector('#kpi-supergiulia .kpi-card:nth-child(2) .sub');
     if (subPren) subPren.textContent = d.tassoConversione > 0 ? 'tasso conversione ' + d.tassoConversione + '%' : 'dati in fase di raccolta';
   } else {
-    ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
-      document.getElementById(id).className = 'value';
-    });
-    animateCounter(document.getElementById('cv-conversazioni'), d.conversazioni, '');
-    animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
-    animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
-    animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
-    const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
-    const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
-    const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
-    const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
-    if (subS) subS.textContent = pctStraniera + '% del totale';
-    if (subF) subF.textContent = pctFuori + '% del totale';
+    if (section === 'casevacanze' && p === '2mesi') {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = 'dati in elaborazione';
+        el.className = 'value placeholder';
+      });
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = '';
+      if (subF) subF.textContent = '';
+    } else {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        document.getElementById(id).className = 'value';
+      });
+      animateCounter(document.getElementById('cv-conversazioni'), d.conversazioni, '');
+      animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
+      animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
+      animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
+      const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
+      const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = pctStraniera + '% del totale';
+      if (subF) subF.textContent = pctFuori + '% del totale';
+    }
   }
 }
 
