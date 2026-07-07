@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dolomitissime · Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--text:#1a1a2e;--border:#e2e8f0;--subtext:#94a3b8;--accent:#0f3460;--menu-bg:#fff;--menu-border:#e2e8f0;--switcher-bg:#e2e8f0}
+body.dark{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155;--subtext:#64748b;--accent:#4fb8e0;--menu-bg:#1e293b;--menu-border:#334155;--switcher-bg:#334155}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+
+/* Header */
+header{background:linear-gradient(135deg,#0f3460,#16213e,#1a2980,#0f3460);background-size:400% 400%;animation:gradientShift 8s ease infinite;color:#fff;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* Dark mode toggle */
+.dark-toggle{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:background .2s,transform .2s}
+.dark-toggle:hover{background:rgba(255,255,255,.25);transform:rotate(15deg)}
+header h1{font-size:1.35rem;font-weight:600;letter-spacing:-.01em}
+header h1 span{color:#e94560}
+header .domain{font-size:.8rem;color:rgba(255,255,255,.5)}
+
+/* Menu tabs */
+.menu{background:var(--menu-bg);border-bottom:1px solid var(--menu-border);display:flex;padding:0 2rem;transition:background .3s}
+.menu button{padding:1rem 1.75rem;border:none;background:none;font-size:.9rem;font-weight:500;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;transition:.15s}
+.menu button:hover{color:var(--accent)}
+.menu button.active{color:var(--accent);border-bottom-color:#e94560}
+
+/* Main */
+main{max-width:1200px;margin:0 auto;padding:1.5rem 2rem 3rem}
+
+/* View switcher */
+.view-switcher{display:inline-flex;background:var(--switcher-bg);border-radius:8px;overflow:hidden;margin-bottom:1.5rem;transition:background .3s}
+.view-switcher button{padding:.5rem 1.25rem;border:none;background:none;font-size:.85rem;font-weight:500;color:#475569;cursor:pointer;transition:.15s}
+.view-switcher button.active{background:var(--accent);color:#fff;border-radius:8px}
+
+/* Section */
+.section{display:none}
+.section.active{display:block}
+
+/* Live badge */
+.live-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.1);padding:.3rem .75rem .3rem .6rem;border-radius:20px;font-size:.7rem;color:rgba(255,255,255,.8)}
+.live-badge .dot{width:7px;height:7px;border-radius:50%;background:#6edba8;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(110,219,168,.5)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(110,219,168,.2)}}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.kpi-card{background:var(--card);border-radius:12px;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s,background .3s;position:relative;overflow:hidden}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(15,52,96,.12)}
+.kpi-card .label{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--subtext);margin-bottom:.3rem}
+.kpi-card .value{font-size:1.75rem;font-weight:700;color:var(--accent)}
+.kpi-card .value.highlight{color:#e94560}
+.kpi-card .sub{font-size:.75rem;color:var(--subtext);margin-top:.2rem}
+.kpi-card .value.placeholder{font-size:1rem;font-weight:400;color:var(--subtext);font-style:italic}
+
+/* Ring progress for percentage KPIs */
+.kpi-card .value-wrap{display:inline-flex;align-items:center;gap:.6rem}
+.kpi-ring{width:38px;height:38px;flex-shrink:0;display:inline-block}
+.kpi-ring svg{width:38px;height:38px;transform:rotate(-90deg)}
+.kpi-ring .bg{fill:none;stroke:#e2e8f0;stroke-width:3.5}
+.kpi-ring .fg{fill:none;stroke:#0f3460;stroke-width:3.5;stroke-linecap:round;transition:stroke-dashoffset .8s ease-out}
+.kpi-ring .fg.highlight{stroke:#e94560}
+
+/* Banner */
+.banner{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #f59e0b;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;font-size:.85rem;font-weight:500;color:#92400e}
+.banner span{background:#e94560;color:#fff;font-size:.7rem;padding:.15rem .5rem;border-radius:4px;font-weight:600}
+
+/* Charts row */
+.charts-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;margin-bottom:2rem}
+.chart-card{background:var(--card);border-radius:12px;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:background .3s}
+.chart-card h3{font-size:.85rem;font-weight:600;color:var(--subtext);margin-bottom:1rem}
+.chart-card canvas{max-height:280px;max-width:100%}
+
+/* Domande ricorrenti table */
+.recurring-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.recurring-table th{text-align:left;padding:.6rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.75rem;text-transform:uppercase}
+.recurring-table td{padding:.6rem .75rem;border-bottom:1px solid #f1f5f9}
+.recurring-table .progress{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;max-width:160px}
+.recurring-table .progress div{height:100%;border-radius:3px;background:linear-gradient(90deg,#0f3460,#e94560)}
+.recurring-table tr:hover td{background:#f8fafc}
+
+/* Responsive */
+@media(max-width:640px){
+  header{padding:1rem}
+  .menu{padding:0 1rem;overflow-x:auto}
+  main{padding:1rem}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-row{grid-template-columns:1fr}
+}
+
+/* Footer */
+footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);border-top:1px solid var(--border);margin-top:2rem;transition:color .3s,border-color .3s}
+
+/* Staggered entrance */
+.stagger{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+.stagger.visible{opacity:1;transform:translateY(0)}
+.stagger-delay-1{transition-delay:.08s}
+.stagger-delay-2{transition-delay:.16s}
+.stagger-delay-3{transition-delay:.24s}
+.stagger-delay-4{transition-delay:.32s}
+.stagger-delay-5{transition-delay:.4s}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <img src="./logo.jpg" alt="Dolomitissime" style="height:2.5rem;width:auto;border-radius:6px">
+    <img src="./solovera-logo.svg" alt="Solovera" style="height:1.6rem;width:auto;opacity:.9">
+    <div>
+      <h1>Dashboard di lavoro <span>DOLOMITISSIME</span>—<span>SOLOVERA</span></h1>
+      <div class="domain">dolomitissime.solovera.work</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:.5rem">
+    <div class="live-badge"><span class="dot"></span> Dati · 06/07/2026</div>
+    <button class="dark-toggle" id="darkToggle" title="Modalità scura">🌙</button>
+  </div>
+</header>
+
+<nav class="menu" id="mainMenu">
+  <button class="active" data-section="supergiulia">📊 Report SuperGiulia</button>
+  <button data-section="casevacanze">🏡 Report Chatbot Case Vacanze</button>
+  <button data-section="brainstorming">🧠 Progetti in brainstorming</button>
+  <button data-section="standby">⏸️ Progetti in stand by</button>
+  <button data-section="lavorazione">🔧 Progetti in lavorazione</button>
+</nav>
+
+<main>
+
+<!-- ========================== -->
+<!-- REPORT SUPERGIULIA -->
+<!-- ========================== -->
+<section class="section active" id="section-supergiulia">
+
+  <div class="view-switcher" id="switcher-supergiulia">
+    <button class="active" data-period="2mesi">Ultimi 2 mesi</button>
+    <button data-period="cumulato">Cumulato</button>
+  </div>
+
+  <!-- Banner prenotazioni in arrivo -->
+  <div class="banner">
+    📬 <span>NUOVO</span> Prenotazioni in arrivo: <strong id="prenotazioni-banner">4</strong>
+  </div>
+
+  <!-- KPI SuperGiulia -->
+  <div class="kpi-grid" id="kpi-supergiulia">
+    <div class="kpi-card stagger">
+      <div class="label">Conversazioni</div>
+      <div class="value" id="sg-conversazioni">847</div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-1">
+      <div class="label">Prenotazioni</div>
+      <div class="value highlight" id="sg-prenotazioni">129</div>
+      <div class="sub">tasso conversione 15.2%</div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-2">
+      <div class="label">Tasso Risposta</div>
+      <div class="value">
+        <div class="value-wrap">
+          <span class="kpi-ring">
+            <svg viewBox="0 0 38 38">
+              <circle class="bg" cx="19" cy="19" r="16"/>
+              <circle class="fg" id="ring-risposta" cx="19" cy="19" r="16" stroke-dasharray="100.53" stroke-dashoffset="0"/>
+            </svg>
+          </span>
+          <span id="sg-risposta">94%</span>
+        </div>
+      </div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-3">
+      <div class="label">Conv. Portate a Termine</div>
+      <div class="value">
+        <div class="value-wrap">
+          <span class="kpi-ring">
+            <svg viewBox="0 0 38 38">
+              <circle class="bg" cx="19" cy="19" r="16"/>
+              <circle class="fg" id="ring-completate" cx="19" cy="19" r="16" stroke-dasharray="100.53" stroke-dashoffset="30.16"/>
+            </svg>
+          </span>
+          <span id="sg-completate">82%</span>
+        </div>
+      </div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-4">
+      <div class="label">Messaggi Medi / Chat</div>
+      <div class="value" id="sg-msgmedi">6.3</div>
+    </div>
+  </div>
+
+  <!-- Grafici SuperGiulia -->
+  <div class="charts-row">
+    <div class="chart-card stagger stagger-delay-2">
+      <h3>📍 Località più richieste</h3>
+      <canvas id="chart-localita"></canvas>
+    </div>
+    <div class="chart-card stagger stagger-delay-3">
+      <h3>📅 Stagionalità</h3>
+      <canvas id="chart-stagionalita"></canvas>
+    </div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-card stagger stagger-delay-2">
+      <h3>🧑‍🤝‍🧑 Composizione Prenotazioni</h3>
+      <canvas id="chart-composizione"></canvas>
+    </div>
+    <div class="chart-card stagger stagger-delay-3">
+      <h3>⭐ Preferenze Dichiarate</h3>
+      <canvas id="chart-preferenze"></canvas>
+    </div>
+  </div>
+
+  <!-- Progetti footer cards -->
+  <div class="charts-row" style="margin-top:1.5rem">
+    <div class="chart-card stagger stagger-delay-4" style="border-top:3px solid #e94560">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#e94560;font-weight:600;margin-bottom:.75rem">📋 Progetti in studio</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .6rem;background:#f8fafc;border-radius:8px;border-left:3px solid #0f3460">
+          <span style="font-size:.85rem">📝</span>
+          <span style="font-size:.85rem;font-weight:500;color:#1a1a2e">Tracciare le prenotazioni</span>
+        </div>
+        <div style="padding:.5rem .6rem;color:#94a3b8;font-size:.8rem;border:1px dashed #e2e8f0;border-radius:8px">+ Aggiungi</div>
+      </div>
+    </div>
+    <div class="chart-card" style="border-top:3px solid #0f3460">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#0f3460;font-weight:600;margin-bottom:.75rem">⚙️ Progetti in esecuzione</div>
+      <div style="padding:2rem 0;text-align:center;color:#94a3b8;font-size:.85rem;border:1px dashed #e2e8f0;border-radius:10px">
+        Nessun progetto attivo
+      </div>
+    </div>
+    <div class="chart-card" style="border-top:3px solid #f59e0b">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#f59e0b;font-weight:600;margin-bottom:.75rem">📄 Report PDF</div>
+      <div style="padding:2rem 0;text-align:center;color:#94a3b8;font-size:.85rem;border:1px dashed #e2e8f0;border-radius:10px">
+        Nessun report disponibile
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ========================== -->
+<!-- REPORT CHATBOT CASE VACANZE -->
+<!-- ========================== -->
+<section class="section" id="section-casevacanze">
+
+  <div class="view-switcher" id="switcher-casevacanze">
+    <button class="active" data-period="2mesi">Ultimi 2 mesi</button>
+    <button data-period="cumulato">Cumulato</button>
+  </div>
+
+  <!-- KPI Case Vacanze -->
+  <div class="kpi-grid" id="kpi-casevacanze">
+    <div class="kpi-card stagger">
+      <div class="label">Conversazioni</div>
+      <div class="value" id="cv-conversazioni">650</div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-1">
+      <div class="label">Messaggi</div>
+      <div class="value" id="cv-messaggi">1,836</div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-2">
+      <div class="label">Messaggi Lingua Straniera</div>
+      <div class="value" id="cv-straniera">390</div>
+      <div class="sub">21.2% del totale</div>
+    </div>
+    <div class="kpi-card stagger stagger-delay-3">
+      <div class="label">Messaggi Fuori Orario</div>
+      <div class="value" id="cv-fuoriorario">353</div>
+      <div class="sub">19.2% del totale</div>
+    </div>
+  </div>
+
+  <!-- Report per appartamento e annuale -->
+  <div class="stagger stagger-delay-4" style="background:linear-gradient(135deg,#f8fafc,#f0fdf4);border:1px solid #bbf7d0;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+      <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:#16a34a;font-weight:600;margin-bottom:.5rem">📊 Report e analisi</div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center">
+        <a href="https://docs.google.com/spreadsheets/d/1MA8BOXg1EkSRi1EDl1NVsWUXgJF6UCMQhKbKz_fVfms/edit?usp=sharing" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;background:#0f3460;color:#fff;padding:.6rem 1.25rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:500;transition:background .15s"
+           onmouseover="this.style.background='#e94560'" onmouseout="this.style.background='#0f3460'">
+          📋 Report per appartamento
+        </a>
+        <a href="/reportannualecasevacanze" style="display:inline-flex;align-items:center;gap:.4rem;background:#0f3460;color:#fff;padding:.6rem 1.25rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:500;transition:background .15s"
+           onmouseover="this.style.background='#e94560'" onmouseout="this.style.background='#0f3460'">
+          📈 Report annuale 25-26
+        </a>
+      </div>
+      <div style="margin-top:.75rem;font-size:.7rem;color:#94a3b8">Report per appartamento (Google Sheets) · Report annuale 25-26 (dashboard)</div>
+    </div>
+
+</section>
+
+<!-- BRAINSTORMING -->
+<section class="section" id="section-brainstorming">
+
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+    <span style="font-size:1.8rem">🧠</span>
+    <h2 style="color:#0f3460;font-size:1.3rem">Progetti in brainstorming</h2>
+  </div>
+
+  <div class="chart-card" style="border-left:4px solid #533483;margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+      <h3 style="color:#0f3460;font-size:1.1rem;font-weight:700">📱 Web App All-in-One <span style="font-weight:400;color:#94a3b8;font-size:.85rem">(web + app)</span></h3>
+      <span style="background:#f3e8ff;color:#533483;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">🧠 IN BRAINSTORMING</span>
+    </div>
+    <p style="color:#64748b;font-size:.85rem;margin-bottom:1rem;line-height:1.5">
+      Piattaforma unificata per la gestione dell'ospite: dall'arrivo al check-out,
+      passando per pagamenti, servizi extra e recensioni.
+    </p>
+
+    <h4 style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:.75rem">🎯 Funzionalità previste</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.4rem;margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Informazioni sull'immobile</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Stato prenotazione e pagamenti</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Online check-in</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Orario di arrivo e istruzioni</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Istruzioni ritiro chiavi</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Posizione e indicazioni stradali</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Link al chatbot Giulia</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Informazioni generali e orari ufficio</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#6edba8;font-size:.85rem">✓</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Istruzioni per il check-out</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#4fb8e0;font-size:.85rem">💰</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Vendita servizi extra (early/late, biancheria, ...)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#f8fafc;border-radius:6px">
+        <span style="color:#4fb8e0;font-size:.85rem">⭐</span>
+        <span style="font-size:.82rem;color:#1a1a2e">Richiesta recensione finale</span>
+      </div>
+    </div>
+
+    <div style="background:#f1f5f9;border-radius:8px;padding:.75rem 1rem">
+      <div style="font-size:.75rem;color:#64748b;line-height:1.5">
+        💡 <strong>Idea:</strong> piattaforma web + app per coprire l'intero customer journey dell'ospite,
+        riducendo il carico operativo e migliorando l'esperienza. Da validare con dati di utilizzo reali.
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- STAND BY -->
+<section class="section" id="section-standby">
+
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+    <span style="font-size:1.8rem">⏸️</span>
+    <h2 style="color:#0f3460;font-size:1.3rem">Progetti in stand by</h2>
+  </div>
+
+  <div class="chart-card" style="border-left:4px solid #f59e0b;margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+      <h3 style="color:#0f3460;font-size:1.1rem;font-weight:700">🔄 PASSAGGIO DA SERVER A GOOGLE DRIVE</h3>
+      <span style="background:#fef3c7;color:#92400e;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">⏸️ IN STAND BY</span>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase">Sotto-task</th>
+          <th style="text-align:center;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase;width:90px">Stato</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">💾 Backup info locali</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">☁️ Creazione ambiente Google Drive</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">📁 Realizzazione proposta organizzazione cartelle</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">📤 Caricamento dati</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Da fare</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🧪 Test di 2 in contemporanea al server</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Da fare</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🔚 Chiusura server — fine passaggio</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Da fare</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Disclaimer -->
+  <div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:12px;padding:1.25rem 1.5rem">
+    <div style="display:flex;align-items:flex-start;gap:.75rem">
+      <span style="font-size:1.3rem">📌</span>
+      <div>
+        <div style="font-weight:600;color:#92400e;margin-bottom:.3rem;font-size:.9rem">Progetto in stand by</div>
+        <p style="font-size:.82rem;color:#b45309;line-height:1.6">
+          Il passaggio è stato messo in pausa perché l'implementazione di <strong>On Office</strong> è stata molto impegnativa per il team. 
+          Una volta digerito e normalizzato l'uso di On Office, <strong>a seguito di un ok dalla proprietà</strong>, 
+          ripartiremo con questo progetto riprendendo dal punto in cui ci siamo fermati.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- LAVORAZIONE -->
+<section class="section" id="section-lavorazione">
+
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+    <span style="font-size:1.8rem">🔧</span>
+    <h2 style="color:#0f3460;font-size:1.3rem">Progetti in lavorazione</h2>
+  </div>
+
+  <div class="chart-card" style="border-left:4px solid #0d7377;margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+      <h3 style="color:#0f3460;font-size:1.1rem;font-weight:700">⚙️ Automazione Amministrazione</h3>
+      <span style="background:#e6fffa;color:#0d7377;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">🔧 IN CORSO</span>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase">Sotto-task</th>
+          <th style="text-align:center;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase;width:110px">Stato</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">📐 Studio preliminare</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🔗 Realizzazione automatch codice fiscale</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🛠️ Realizzazione strumento di test per individuazione anomalie</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dcfce7;color:#166534;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">✅ Fatto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🧪 Fase di testing da parte di Romina</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">🔄 In corso</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🚀 Realizzazione versione finale e consegna</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Da fare</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+      <span style="background:#f1f5f9;color:#475569;font-size:.7rem;padding:.2rem .6rem;border-radius:4px">📊 60% completato</span>
+      <span style="background:#f1f5f9;color:#475569;font-size:.7rem;padding:.2rem .6rem;border-radius:4px">🎯 Prossimo: testing Romina → versione finale</span>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  Dashboard di lavoro Dolomitissime-Solovera · solovera.work · v0.2
+</footer>
+
+<script>
+(() => {
+// =====================
+// DATA: test values
+// =====================
+const data = {
+  supergiulia: {
+    '2mesi': {
+      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 73, msgmedi: 7.6,
+      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
+      stagionalita: [12, 19, 30, 1, 2, 2],
+      composizione: [35, 15, 10, 6, 2, 7],
+      preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
+    },
+    cumulato: {
+      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 73, msgmedi: 7.6,
+      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
+      stagionalita: [12, 19, 30, 1, 2, 2],
+      composizione: [35, 15, 10, 6, 2, 7],
+      preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
+    }
+  },
+  casevacanze: {
+    '2mesi': {
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
+    },
+    cumulato: {
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
+    }
+  }
+};
+
+const localitaLabels = ['Alleghe','Falcade','Rocca P.','Agordo','Pozza Fassa','Val di Fassa','Moena','Vigo Fassa','Selva Cadore','Cadore'];
+const mesiLabels = ['Giu 26','Lug 26','Ago 26','Set 26','Dic 26','Giu 27'];
+const composizioneLabels = ['2 persone','4 persone','6-7 persone','3 persone','5 persone','Altro'];
+const preferenzeLabels = ['Bambini','Animali','Lavatrice','Balcone','Giardino','Lavastoviglie','Parcheggio','Terrazza'];
+const domandeKeys = ['wifi','attivita','spazzatura','luce','elettrodomestici','parcheggio','pulizie','animali','riscaldamento'];
+const domandeLabels = {
+  wifi:'📶 WiFi / Internet', attivita:'🎯 Attività / Escursioni', spazzatura:'🗑️ Spazzatura',
+  luce:'💡 Luci / Elettrico', elettrodomestici:'🔌 Elettrodomestici', parcheggio:'🚗 Parcheggio',
+  pulizie:'🧹 Pulizie / Check-out', animali:'🐾 Animali ammessi', riscaldamento:'🌡️ Riscaldamento / Clima'
+};
+
+let periodi = { supergiulia: '2mesi', casevacanze: '2mesi' };
+const charts = {};
+
+// =====================
+// MENU
+// =====================
+document.querySelectorAll('#mainMenu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#mainMenu button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + btn.dataset.section).classList.add('active');
+    // rebuild charts on switch (canvas may need re-render)
+    setTimeout(renderAll, 50);
+  });
+});
+
+// =====================
+// VIEW SWITCHER
+// =====================
+document.querySelectorAll('.view-switcher').forEach(sw => {
+  sw.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sw.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const section = sw.id.replace('switcher-','');
+      periodi[section] = btn.dataset.period;
+      updateKPIs(section);
+      // domande ricorrenti rimosse
+      updateCharts(section);
+    });
+  });
+});
+
+// =====================
+// UPDATE KPIs
+// =====================
+function updateKPIs(section) {
+  const p = periodi[section];
+  const d = data[section][p];
+  if (section === 'supergiulia') {
+    animateCounter(document.getElementById('sg-conversazioni'), d.conversazioni, '');
+    const elPren = document.getElementById('sg-prenotazioni');
+    if (d.prenotazioni > 0) {
+      elPren.textContent = d.prenotazioni.toLocaleString();
+    } else {
+      elPren.textContent = '—';
+    }
+    const banner = document.getElementById('prenotazioni-banner');
+    if (d.prenotazioni > 0) {
+      banner.textContent = d.prenotazioni;
+      banner.previousElementSibling.textContent = 'NUOVO';
+    } else {
+      banner.textContent = 'dati in arrivo';
+      banner.style.fontWeight = '400';
+      banner.previousElementSibling.textContent = 'IN ATTESA';
+    }
+    document.getElementById('sg-risposta').textContent = d.risposta + '%';
+    document.getElementById('sg-completate').textContent = d.completate + '%';
+    document.getElementById('sg-msgmedi').textContent = d.msgmedi.toFixed(1);
+    // Ring progress
+    updateRing('ring-risposta', d.risposta);
+    updateRing('ring-completate', d.completate);
+    const subPren = document.querySelector('#kpi-supergiulia .kpi-card:nth-child(2) .sub');
+    if (subPren) subPren.textContent = d.tassoConversione > 0 ? 'tasso conversione ' + d.tassoConversione + '%' : 'dati in fase di raccolta';
+  } else {
+    if (section === 'casevacanze' && p === '2mesi') {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = 'dati in elaborazione';
+        el.className = 'value placeholder';
+      });
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = '';
+      if (subF) subF.textContent = '';
+    } else {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        document.getElementById(id).className = 'value';
+      });
+      animateCounter(document.getElementById('cv-conversazioni'), d.conversazioni, '');
+      animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
+      animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
+      animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
+      const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
+      const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = pctStraniera + '% del totale';
+      if (subF) subF.textContent = pctFuori + '% del totale';
+    }
+  }
+}
+
+// =====================
+// CHARTS — improved with datalabels & gradients
+// =====================
+Chart.register(ChartDataLabels);
+
+const colorPalette = [
+  '#0f3460','#e94560','#1a1a2e','#16213e','#533483',
+  '#0d7377','#c0392b','#2980b9','#27ae60','#f39c12'
+];
+
+// Shared datalabels config for bar charts
+const barLabel = {
+  color: '#0f3460', font: { weight: 'bold', size: 11 },
+  anchor: 'end', align: 'end', offset: 2
+};
+
+// Shared tooltip styling
+const tooltipOpts = {
+  backgroundColor: '#0f3460', titleColor: '#fff', bodyColor: '#e2e8f0',
+  cornerRadius: 8, padding: 10, displayColors: true
+};
+
+// Counter animation
+function animateCounter(el, target, suffix) {
+  if (!el || target === 0 || target === undefined) return;
+  const duration = 800;
+  const steps = 30;
+  let current = 0;
+  const increment = target / steps;
+  const formatter = new Intl.NumberFormat('it-IT');
+  const step = () => {
+    current += increment;
+    if (current >= target) { el.textContent = formatter.format(target) + suffix; return; }
+    el.textContent = formatter.format(Math.round(current)) + suffix;
+    requestAnimationFrame(step);
+  };
+  let started = false;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !started) {
+        started = true;
+        step();
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(el);
+}
+
+// Ring progress
+function updateRing(id, pct) {
+  const ring = document.getElementById(id);
+  if (!ring) return;
+  const circumference = 100.53; // 2 * PI * 16
+  const offset = circumference - (pct / 100) * circumference;
+  ring.style.strokeDashoffset = offset;
+  if (pct >= 90) ring.classList.add('highlight');
+  else ring.classList.remove('highlight');
+}
+
+function createGradient(ctx, chart, color1, color2) {
+  if (!ctx) return color1;
+  const g = ctx.createLinearGradient(0, 0, 0, chart.height || 300);
+  g.addColorStop(0, color1);
+  g.addColorStop(1, color2);
+  return g;
+}
+
+function renderAll() {
+  renderSuperCharts();
+  renderCaseCharts();
+}
+
+function renderSuperCharts() {
+  const p = periodi.supergiulia;
+  const d = data.supergiulia[p];
+
+  // --- Località ---
+  const ctx1 = document.getElementById('chart-localita');
+  if (ctx1) {
+    if (charts.localita) charts.localita.destroy();
+    const canvas = ctx1;
+    charts.localita = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: localitaLabels,
+        datasets: [{
+          label: 'Richieste', data: d.localita,
+          backgroundColor: d.localita.map((v,i) => {
+            const colors = ['#0f3460','#16213e','#1a2744','#2c3e6b','#3d5a99','#4fb8e0','#3d8bbf','#2c6e9e','#1b517e','#0f3460'];
+            return colors[i % colors.length];
+          }),
+          borderRadius: 6, borderSkipped: false,
+          hoverBackgroundColor: '#e94560'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        animation: { duration: 800, easing: 'easeOutQuart' },
+        plugins: {
+          legend: { display: false },
+          tooltip: { ...tooltipOpts, callbacks: { label: ctx => '  ' + ctx.parsed.y + ' richieste' } },
+          datalabels: { ...barLabel, color: d.localita.map(v => v > 10 ? '#fff' : '#0f3460'), font: { weight: 'bold', size: 11 } }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+          x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+    // Override label color logic after creation
+    charts.localita.options.plugins.datalabels.color = function(ctx) {
+      return ctx.dataset.data[ctx.dataIndex] > 8 ? '#fff' : '#0f3460';
+    };
+  }
+
+  // --- Stagionalità ---
+  const ctx2 = document.getElementById('chart-stagionalita');
+  if (ctx2) {
+    if (charts.stagionalita) charts.stagionalita.destroy();
+    charts.stagionalita = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: mesiLabels,
+        datasets: [{
+          label: 'Conversazioni', data: d.stagionalita,
+          backgroundColor: d.stagionalita.map((v,i) => i <= 2
+            ? ['#e94560','#d6384d','#c22a3f'][i]
+            : '#0f3460'
+          ),
+          borderRadius: 8, borderSkipped: false,
+          barPercentage: 0.6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        animation: { duration: 800, easing: 'easeOutQuart' },
+        plugins: {
+          legend: { display: false },
+          tooltip: { ...tooltipOpts, callbacks: { label: ctx => '  ' + ctx.parsed.y + ' conversazioni' } },
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 13 },
+            anchor: 'end', align: 'end', offset: 2,
+            formatter: v => v > 0 ? v : ''
+          }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+          x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11, weight: 'bold' } } }
+        }
+      }
+    });
+  }
+
+  // --- Composizione (doughnut) ---
+  const ctx3 = document.getElementById('chart-composizione');
+  if (ctx3) {
+    if (charts.composizione) charts.composizione.destroy();
+    charts.composizione = new Chart(ctx3, {
+      type: 'doughnut',
+      data: {
+        labels: composizioneLabels,
+        datasets: [{
+          data: d.composizione,
+          backgroundColor: ['#0f3460','#e94560','#f0c060','#533483','#0d7377','#94a3b8'],
+          borderWidth: 3,
+          borderColor: '#fff',
+          hoverOffset: 12
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        cutout: '60%',
+        animation: { animateRotate: true, duration: 1000 },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, padding: 14, font: { size: 11 }, color: '#475569' }
+          },
+          tooltip: { ...tooltipOpts, callbacks: { label: ctx => {
+            const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+            const pct = ((ctx.parsed / total) * 100).toFixed(1);
+            return '  ' + ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+          }}},
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 14 },
+            formatter: (v, ctx) => {
+              const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+              const pct = (v / total * 100).toFixed(0);
+              return pct > 8 ? pct + '%' : '';
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- Preferenze (orizzontale) ---
+  const ctx4 = document.getElementById('chart-preferenze');
+  if (ctx4) {
+    if (charts.preferenze) charts.preferenze.destroy();
+    charts.preferenze = new Chart(ctx4, {
+      type: 'bar',
+      data: {
+        labels: preferenzeLabels,
+        datasets: [{
+          label: 'Menzioni', data: d.preferenze,
+          backgroundColor: d.preferenze.map((v,i) => {
+            const colors = ['#6edba8','#4fb8e0','#f0c060','#e94560','#533483','#0d7377','#c0392b','#2980b9'];
+            return colors[i] + 'CC';
+          }),
+          borderRadius: 6, borderSkipped: false,
+          barThickness: 22
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: true,
+        animation: { duration: 800, easing: 'easeOutQuart' },
+        plugins: {
+          legend: { display: false },
+          tooltip: { ...tooltipOpts, callbacks: { label: ctx => '  ' + ctx.parsed.x + ' menzioni' } },
+          datalabels: {
+            color: '#0f3460', font: { weight: 'bold', size: 12 },
+            anchor: 'end', align: 'end', offset: 4,
+            formatter: v => v
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#94a3b8', font: { size: 10 } }, beginAtZero: true },
+          y: { grid: { display: false }, ticks: { color: '#475569', font: { size: 11 } } }
+        }
+      }
+    });
+  }
+}
+
+function renderCaseCharts() {
+  // No charts for case vacanze yet
+}
+
+// =====================
+// INIT
+// =====================
+document.getElementById('darkToggle').addEventListener('click', function() {
+  document.body.classList.toggle('dark');
+  this.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+});
+if (localStorage.getItem('darkMode') === 'true') {
+  document.body.classList.add('dark');
+  document.getElementById('darkToggle').textContent = '☀️';
+}
+
+// Staggered entrance
+function initStagger() {
+  document.querySelectorAll('.stagger').forEach((el, i) => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setTimeout(() => el.classList.add('visible'), i * 60);
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    obs.observe(el);
+  });
+}
+
+// Re-run stagger when switching sections (menu clicks)
+document.querySelectorAll('#mainMenu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTimeout(initStagger, 100);
+  });
+});
+
+// =====================
+updateKPIs('supergiulia');
+updateKPIs('casevacanze');
+// updateDomandeRicorrenti('casevacanze'); // sezione rimossa
+renderAll();
+setTimeout(initStagger, 200);
+})();
+</script>
+</body>
+</html>
