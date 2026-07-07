@@ -505,7 +505,7 @@ const data = {
       risposta: 100, completate: 74, msgmedi: 7.4,
       localita: [87, 30, 20, 13, 12, 6, 5, 4, 4, 2, 2, 2],
       stagionalita: [55, 43, 68, 4, 1, 13, 2, 2],
-      composizione: [35, 15, 10, 6, 2, 7],
+      composizione: [74, 45, 50, 9, 9, 13, 9],
       preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
     },
     cumulato: {
@@ -513,7 +513,7 @@ const data = {
       risposta: 100, completate: 74, msgmedi: 7.4,
       localita: [87, 30, 20, 13, 12, 6, 5, 4, 4, 2, 2, 2],
       stagionalita: [55, 43, 68, 4, 1, 13, 2, 2],
-      composizione: [35, 15, 10, 6, 2, 7],
+      composizione: [74, 45, 50, 9, 9, 13, 9],
       preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
     }
   },
@@ -531,7 +531,7 @@ const data = {
 
 const localitaLabels = ['Alleghe','Falcade','Rocca Pietore','Val di Fassa','Arabba','Moena','Pozza di Fassa','Canale d\'Agordo','Vigo di Fassa','Canazei','Colle S. Lucia','Livinallongo'];
 const mesiLabels = ['Giu 26','Lug 26','Ago 26','Set 26','Nov 26','Dic 26','Gen 27','Giu 27'];
-const composizioneLabels = ['2 persone','4 persone','6-7 persone','3 persone','5 persone','Altro'];
+const composizioneLabels = ['2 persone','3 persone','4 persone','5 persone','6 persone','7 persone','8+ persone'];
 const preferenzeLabels = ['Bambini','Animali','Lavatrice','Balcone','Giardino','Lavastoviglie','Parcheggio','Terrazza'];
 const domandeKeys = ['wifi','attivita','spazzatura','luce','elettrodomestici','parcheggio','pulizie','animali','riscaldamento'];
 const domandeLabels = {
@@ -799,7 +799,7 @@ function renderSuperCharts() {
         labels: composizioneLabels,
         datasets: [{
           data: d.composizione,
-          backgroundColor: ['#0f3460','#e94560','#f0c060','#533483','#0d7377','#94a3b8'],
+          backgroundColor: ['#0f3460','#e94560','#f0c060','#533483','#0d7377','#94a3b8','#2980b9'],
           borderWidth: 3,
           borderColor: '#fff',
           hoverOffset: 12
