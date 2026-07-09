@@ -565,11 +565,11 @@ const data = {
   },
   casevacanze: {
     '2mesi': {
-      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      conversazioni: 85, messaggi: 229, straniera: 166, fuoriorario: 123,
       domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     },
     cumulato: {
-      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
+      conversazioni: 650, messaggi: 1836, straniera: 1347, fuoriorario: 727,
       domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     }
   }
@@ -652,17 +652,7 @@ function updateKPIs(section) {
     const subPren = document.querySelector('#kpi-supergiulia .kpi-card:nth-child(2) .sub');
     if (subPren) subPren.textContent = d.tassoConversione > 0 ? 'tasso conversione ' + d.tassoConversione + '%' : 'dati in fase di raccolta';
   } else {
-    if (section === 'casevacanze' && p === '2mesi') {
-      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
-        const el = document.getElementById(id);
-        el.textContent = 'dati in elaborazione';
-        el.className = 'value placeholder';
-      });
-      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
-      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
-      if (subS) subS.textContent = '';
-      if (subF) subF.textContent = '';
-    } else {
+    if (section === 'casevacanze') {
       ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
         document.getElementById(id).className = 'value';
       });
@@ -670,8 +660,8 @@ function updateKPIs(section) {
       animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
       animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
       animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
-      const pctStraniera = (d.straniera / d.conversazioni * 100).toFixed(1);
-      const pctFuori = (d.fuoriorario / d.conversazioni * 100).toFixed(1);
+      const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
+      const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
       const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
       const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
       if (subS) subS.textContent = pctStraniera + '% del totale';
