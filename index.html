@@ -136,26 +136,29 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
 <!-- ========================== -->
 <section class="section active" id="section-supergiulia">
 
-  <div class="view-switcher" id="switcher-supergiulia">
-    <button class="active" data-period="2mesi">Ultimi 2 mesi</button>
-    <button data-period="cumulato">Cumulato</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+    <div class="view-switcher" id="switcher-supergiulia">
+      <button class="active" data-period="2mesi">Ultimi 2 mesi</button>
+      <button data-period="cumulato">Cumulato</button>
+    </div>
+    <div style="font-size:.7rem;color:var(--subtext)">📅 dati aggiornati al 7 luglio · prossimo aggiornamento 7 settembre</div>
   </div>
 
   <!-- Banner prenotazioni in arrivo -->
   <div class="banner">
-    📬 <span>NUOVO</span> Prenotazioni in arrivo: <strong id="prenotazioni-banner">4</strong>
+    📬 <span>IN ATTESA</span> Prenotazioni in arrivo: <strong id="prenotazioni-banner">dati in arrivo</strong>
   </div>
 
   <!-- KPI SuperGiulia -->
   <div class="kpi-grid" id="kpi-supergiulia">
     <div class="kpi-card stagger">
       <div class="label">Conversazioni</div>
-      <div class="value" id="sg-conversazioni">847</div>
+      <div class="value" id="sg-conversazioni">260</div>
     </div>
     <div class="kpi-card stagger stagger-delay-1">
       <div class="label">Prenotazioni</div>
-      <div class="value highlight" id="sg-prenotazioni">129</div>
-      <div class="sub">tasso conversione 15.2%</div>
+      <div class="value highlight" id="sg-prenotazioni">—</div>
+      <div class="sub">dati in fase di raccolta</div>
     </div>
     <div class="kpi-card stagger stagger-delay-2">
       <div class="label">Tasso Risposta</div>
@@ -167,7 +170,7 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
               <circle class="fg" id="ring-risposta" cx="19" cy="19" r="16" stroke-dasharray="100.53" stroke-dashoffset="0"/>
             </svg>
           </span>
-          <span id="sg-risposta">94%</span>
+          <span id="sg-risposta">100%</span>
         </div>
       </div>
     </div>
@@ -181,13 +184,13 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
               <circle class="fg" id="ring-completate" cx="19" cy="19" r="16" stroke-dasharray="100.53" stroke-dashoffset="30.16"/>
             </svg>
           </span>
-          <span id="sg-completate">82%</span>
+          <span id="sg-completate">74%</span>
         </div>
       </div>
     </div>
     <div class="kpi-card stagger stagger-delay-4">
       <div class="label">Messaggi Medi / Chat</div>
-      <div class="value" id="sg-msgmedi">6.3</div>
+      <div class="value" id="sg-msgmedi">7.4</div>
     </div>
   </div>
 
@@ -264,12 +267,12 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
     <div class="kpi-card stagger stagger-delay-2">
       <div class="label">Messaggi Lingua Straniera</div>
       <div class="value" id="cv-straniera">390</div>
-      <div class="sub">21.2% del totale</div>
+      <div class="sub">60.0% delle conversazioni</div>
     </div>
     <div class="kpi-card stagger stagger-delay-3">
       <div class="label">Messaggi Fuori Orario</div>
       <div class="value" id="cv-fuoriorario">353</div>
-      <div class="sub">19.2% del totale</div>
+      <div class="sub">54.3% delle conversazioni</div>
     </div>
   </div>
 
@@ -442,10 +445,10 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
     <h2 style="color:#0f3460;font-size:1.3rem">Progetti in lavorazione</h2>
   </div>
 
-  <div class="chart-card" style="border-left:4px solid #0d7377;margin-bottom:1.5rem">
+  <div class="chart-card" style="border-left:4px solid #f59e0b;margin-bottom:1.5rem">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
       <h3 style="color:#0f3460;font-size:1.1rem;font-weight:700">⚙️ Automazione Amministrazione</h3>
-      <span style="background:#e6fffa;color:#0d7377;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">🔧 IN CORSO</span>
+      <span style="background:#fef3c7;color:#92400e;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">🔄 IN CORSO</span>
     </div>
 
     <table style="width:100%;border-collapse:collapse;font-size:.85rem">
@@ -485,6 +488,49 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
     </div>
   </div>
 
+  <div class="chart-card" style="border-left:4px solid #0d7377;margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+      <h3 style="color:#0f3460;font-size:1.1rem;font-weight:700">🚀 V2 SOLOVERA</h3>
+      <span style="background:#e6fffa;color:#0d7377;font-size:.7rem;padding:.25rem .75rem;border-radius:20px;font-weight:600">🔧 IN CORSO</span>
+    </div>
+
+    <p style="color:#64748b;font-size:.85rem;margin-bottom:1rem;line-height:1.5">
+      Stiamo già lavorando all'elaborazione della versione 2.0 di Solovera,
+      ottimizzando la parte maggiormente utilizzata ed eliminando quello che non serve.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase">Step</th>
+          <th style="text-align:center;padding:.5rem .75rem;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;font-size:.7rem;text-transform:uppercase;width:110px">Stato</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">📋 Analisi preliminare</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">🔄 In corso</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🔄 Switch a ChatGPT 5</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Entro fine luglio</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🧪 MVP nuova versione</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Fine agosto</span></td>
+        </tr>
+        <tr>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9">🚀 Release v2 Solovera</td>
+          <td style="padding:.65rem .75rem;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600">⏳ Entro fine settembre</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+      <span style="background:#f1f5f9;color:#475569;font-size:.7rem;padding:.2rem .6rem;border-radius:4px">🎯 Deadline: fine settembre 2026</span>
+    </div>
+  </div>
+
 </section>
 
 </main>
@@ -501,38 +547,38 @@ footer{text-align:center;padding:2rem;font-size:.75rem;color:var(--subtext);bord
 const data = {
   supergiulia: {
     '2mesi': {
-      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
-      risposta: 100, completate: 73, msgmedi: 7.6,
-      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
-      stagionalita: [12, 19, 30, 1, 2, 2],
-      composizione: [35, 15, 10, 6, 2, 7],
-      preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
+      conversazioni: 260, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 74, msgmedi: 7.4,
+      localita: [87, 30, 20, 13, 12, 6, 5, 4, 4, 2, 2, 2],
+      stagionalita: [55, 43, 68, 4, 1, 13, 2, 2],
+      composizione: [74, 45, 50, 9, 9, 13, 9],
+      preferenze: [58, 48, 6, 6, 3, 3, 2, 2]
     },
     cumulato: {
-      conversazioni: 107, prenotazioni: 0, tassoConversione: 0,
-      risposta: 100, completate: 73, msgmedi: 7.6,
-      localita: [25, 16, 6, 4, 4, 4, 3, 3, 2, 1],
-      stagionalita: [12, 19, 30, 1, 2, 2],
-      composizione: [35, 15, 10, 6, 2, 7],
-      preferenze: [25, 18, 2, 2, 2, 1, 1, 1]
+      conversazioni: 260, prenotazioni: 0, tassoConversione: 0,
+      risposta: 100, completate: 74, msgmedi: 7.4,
+      localita: [87, 30, 20, 13, 12, 6, 5, 4, 4, 2, 2, 2],
+      stagionalita: [55, 43, 68, 4, 1, 13, 2, 2],
+      composizione: [74, 45, 50, 9, 9, 13, 9],
+      preferenze: [58, 48, 6, 6, 3, 3, 2, 2]
     }
   },
   casevacanze: {
     '2mesi': {
-      conversazioni: 85, messaggi: 229, straniera: 166, fuoriorario: 123,
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
       domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     },
     cumulato: {
-      conversazioni: 650, messaggi: 1836, straniera: 1347, fuoriorario: 727,
+      conversazioni: 650, messaggi: 1836, straniera: 390, fuoriorario: 353,
       domande: { wifi:0, attivita:0, spazzatura:0, luce:0, elettrodomestici:0, parcheggio:0, pulizie:0, animali:0, riscaldamento:0 }
     }
   }
 };
 
-const localitaLabels = ['Alleghe','Falcade','Rocca P.','Agordo','Pozza Fassa','Val di Fassa','Moena','Vigo Fassa','Selva Cadore','Cadore'];
-const mesiLabels = ['Giu 26','Lug 26','Ago 26','Set 26','Dic 26','Giu 27'];
-const composizioneLabels = ['2 persone','4 persone','6-7 persone','3 persone','5 persone','Altro'];
-const preferenzeLabels = ['Bambini','Animali','Lavatrice','Balcone','Giardino','Lavastoviglie','Parcheggio','Terrazza'];
+const localitaLabels = ['Alleghe','Falcade','Rocca Pietore','Val di Fassa','Arabba','Moena','Pozza di Fassa','Canale d\'Agordo','Vigo di Fassa','Canazei','Colle S. Lucia','Livinallongo'];
+const mesiLabels = ['Giu 26','Lug 26','Ago 26','Set 26','Nov 26','Dic 26','Gen 27','Giu 27'];
+const composizioneLabels = ['2 persone','3 persone','4 persone','5 persone','6 persone','7 persone','8+ persone'];
+const preferenzeLabels = ['Bambini','Animali','Piano terra','Lavatrice','Lavastoviglie','Giardino','Balcone','Vicino al supermercato'];
 const domandeKeys = ['wifi','attivita','spazzatura','luce','elettrodomestici','parcheggio','pulizie','animali','riscaldamento'];
 const domandeLabels = {
   wifi:'📶 WiFi / Internet', attivita:'🎯 Attività / Escursioni', spazzatura:'🗑️ Spazzatura',
@@ -606,19 +652,31 @@ function updateKPIs(section) {
     const subPren = document.querySelector('#kpi-supergiulia .kpi-card:nth-child(2) .sub');
     if (subPren) subPren.textContent = d.tassoConversione > 0 ? 'tasso conversione ' + d.tassoConversione + '%' : 'dati in fase di raccolta';
   } else {
-    ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
-      document.getElementById(id).className = 'value';
-    });
-    animateCounter(document.getElementById('cv-conversazioni'), d.conversazioni, '');
-    animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
-    animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
-    animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
-    const pctStraniera = (d.straniera / d.messaggi * 100).toFixed(1);
-    const pctFuori = (d.fuoriorario / d.messaggi * 100).toFixed(1);
-    const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
-    const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
-    if (subS) subS.textContent = pctStraniera + '% del totale';
-    if (subF) subF.textContent = pctFuori + '% del totale';
+    if (section === 'casevacanze' && p === '2mesi') {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = 'dati in elaborazione';
+        el.className = 'value placeholder';
+      });
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = '';
+      if (subF) subF.textContent = '';
+    } else {
+      ['cv-conversazioni','cv-messaggi','cv-straniera','cv-fuoriorario'].forEach(id => {
+        document.getElementById(id).className = 'value';
+      });
+      animateCounter(document.getElementById('cv-conversazioni'), d.conversazioni, '');
+      animateCounter(document.getElementById('cv-messaggi'), d.messaggi, '');
+      animateCounter(document.getElementById('cv-straniera'), d.straniera, '');
+      animateCounter(document.getElementById('cv-fuoriorario'), d.fuoriorario, '');
+      const pctStraniera = (d.straniera / d.conversazioni * 100).toFixed(1);
+      const pctFuori = (d.fuoriorario / d.conversazioni * 100).toFixed(1);
+      const subS = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(3) .sub');
+      const subF = document.querySelector('#kpi-casevacanze .kpi-card:nth-child(4) .sub');
+      if (subS) subS.textContent = pctStraniera + '% del totale';
+      if (subF) subF.textContent = pctFuori + '% del totale';
+    }
   }
 }
 
@@ -787,7 +845,7 @@ function renderSuperCharts() {
         labels: composizioneLabels,
         datasets: [{
           data: d.composizione,
-          backgroundColor: ['#0f3460','#e94560','#f0c060','#533483','#0d7377','#94a3b8'],
+          backgroundColor: ['#0f3460','#e94560','#f0c060','#533483','#0d7377','#94a3b8','#2980b9'],
           borderWidth: 3,
           borderColor: '#fff',
           hoverOffset: 12
